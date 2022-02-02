@@ -1,10 +1,17 @@
 package dev.remindBot.Utils.commands;
 
+/**
+ * Create the base class for command
+ * requires an id, description and a command Executor
+ * at least 1 alias is required
+ */
+
 public class Command {
 
     private String id,description;
     private String[] aliases;
     private CommandExecutor executor;
+
 
     public Command(String id, String description, CommandExecutor executor, String... aliases) {
         this.id = id;
