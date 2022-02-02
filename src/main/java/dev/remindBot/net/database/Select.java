@@ -1,29 +1,26 @@
 package dev.remindBot.net.database;
 
 
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 
 public class Select {
 
     public static void createNewTable() {
         // SQLite connection string
-        String url = "jdbc:sqlite:src/main/SQLite/data.db";
+        String url = "jdbc:sqlite:data.db";
 
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS test (\n"
-                + "	id integer PRIMARY KEY,\n"
-                + "	name text NOT NULL,\n"
+        String sql = "CREATE TABLE IF NOT EXISTS test ("
+                + "	id integer PRIMARY KEY,"
+                + "	name text NOT NULL"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             // create a new table
             stmt.execute(sql);
+            System.out.println("Created");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -36,9 +33,10 @@ public class Select {
      */
     private Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:src/main/SQLite/data.db";
+        String url = "jdbc:sqlite:data.db";
         Connection conn = null;
         try {
+            System.out.println("Connected");
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -60,9 +58,20 @@ public class Select {
             // loop through the result set
             while (rs.next()) {
                 System.out.println(rs.getInt("id") +  "\t" +
-                        rs.getString("name") + "\t" +
-                        rs.getDouble("capacity"));
+                        rs.getString("name") + "\t");
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insert(String name) {
+        String sql = "INSERT INTO test(name) VALUES(?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -75,6 +84,7 @@ public class Select {
     public static void main(String[] args) {
         createNewTable();
         Select app = new Select();
+        app.insert("test");
         app.selectAll();
     }
 
